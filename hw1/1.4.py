@@ -83,6 +83,7 @@ def plot_dataset_and_boundary(X, y, target_f, g, title):
     plt.grid(True)
     plt.show()
 
+#PLOTTING
 # (a) Gen 20, Plot examples, target function f
     # Generate a linearly separable dataset of size 20
 target_f = initialize_f()
@@ -92,30 +93,62 @@ plot_dataset_and_target(X_20, y_20, target_f, 'Linearly Separable Data of Size 2
 
 # (b) old 20
     # Run the perceptron algorithm on data set (a)
-g, updates_20 = perceptron_learning_algorithm(X_20, y_20)
+g_original, updates_20 = perceptron_learning_algorithm(X_20, y_20)
     # Plot examples, target function f, final hypothesis g, report number of updates to converge
-plot_dataset_and_boundary(X_20, y_20, target_f, g, f'PLA for Size 20, Updates = {updates_20}')
+plot_dataset_and_boundary(X_20, y_20, target_f, g_original, f'PLA for Size 20, Updates = {updates_20}')
 
 # (c) new 20
     # New randomly generated dataset of size 20
 X_20_new, y_20_new = generate_linearly_separable_data(20, target_f)
     # Run the perceptron algorithm on data set (c)
-g, updates_20_new = perceptron_learning_algorithm(X_20_new, y_20_new)
+g_20, updates_20_new = perceptron_learning_algorithm(X_20_new, y_20_new)
     # Plot examples, target function f, final hypothesis g, report number of updates to converge
-plot_dataset_and_boundary(X_20_new, y_20_new, target_f, g, f'New PLA for Size 20, Updates = {updates_20_new}')
+plot_dataset_and_boundary(X_20_new, y_20_new, target_f, g_20, f'New PLA for Size 20, Updates = {updates_20_new}')
 
 # (d) 100
     # New randomly generated dataset of size 100
 X_100, y_100 = generate_linearly_separable_data(100, target_f)
     # Run the perceptron algorithm on data set (d)
-g, updates_100 = perceptron_learning_algorithm(X_100, y_100)
+g_100, updates_100 = perceptron_learning_algorithm(X_100, y_100)
     # Plot examples, target function f, final hypothesis g, report number of updates to converge
-plot_dataset_and_boundary(X_100, y_100, target_f, g, f'PLA for Size 100, Updates = {updates_100}')
+plot_dataset_and_boundary(X_100, y_100, target_f, g_100, f'PLA for Size 100, Updates = {updates_100}')
 
 # (e) 1000
     # New randomly generated dataset of size 1000
 X_1000, y_1000 = generate_linearly_separable_data(1000, target_f)
     # Run the perceptron algorithm on data set (e)
-g, updates_1000 = perceptron_learning_algorithm(X_1000, y_1000)
+g_1000, updates_1000 = perceptron_learning_algorithm(X_1000, y_1000)
     # Plot examples, target function f, final hypothesis g, report number of updates to converge
-plot_dataset_and_boundary(X_1000, y_1000, target_f, g, f'PLA for Size 1000, Updates = {updates_1000}')
+plot_dataset_and_boundary(X_1000, y_1000, target_f, g_1000, f'PLA for Size 1000, Updates = {updates_1000}')
+
+
+#MEASURING ACCURACY
+# Function to calculate how close f (target function) is to g (learned hypothesis)
+def measure_closeness(X_test, y_test, g_learned, target_f):
+    X_test_bias = np.c_[np.ones(X_test.shape[0]), X_test]  # Add bias term to test data
+    y_pred_f = np.sign(X_test_bias.dot(target_f))  # True labels from target function f
+    y_pred_g = np.sign(X_test_bias.dot(g_learned))  # Predicted labels from learned hypothesis g
+    
+    # Calculate accuracy (how often f and g agree)
+    accuracy = np.mean(y_pred_f == y_pred_g)
+    
+    return accuracy
+
+# Generate a test dataset
+X_test, y_test = generate_linearly_separable_data(1000, target_f)
+
+# Measure how close g (learned hypothesis) is to f (target function) for size 20 data
+accuracy_20 = measure_closeness(X_test, y_test, g_original, target_f)
+print(f'Accuracy of learned hypothesis g compared to target function f (size 20): {accuracy_20:.2f}')
+
+# Measure for size 20 again
+accuracy_20 = measure_closeness(X_test, y_test, g_20, target_f)
+print(f'Accuracy of learned hypothesis g compared to target function f (size 20): {accuracy_20:.2f}')
+
+# Measure for size 100
+accuracy_100 = measure_closeness(X_test, y_test, g_100, target_f)
+print(f'Accuracy of learned hypothesis g compared to target function f (size 100): {accuracy_100:.2f}')
+
+# Measure for size 1000
+accuracy_1000 = measure_closeness(X_test, y_test, g_1000, target_f)
+print(f'Accuracy of learned hypothesis g compared to target function f (size 1000): {accuracy_1000:.2f}')
